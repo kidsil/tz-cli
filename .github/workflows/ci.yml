@@ -1,0 +1,29 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    # Timezone and currency data change when governments and issuers change the
+    # rules, so run on a schedule and not only when the code changes.
+    - cron: '0 6 * * 1'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      # Blocking: these are verified green.
+      - run: cargo test --all
+      - run: cargo build --release
+
+      # Advisory: reported, but not a build failure.
+      - run: cargo fmt --check
+        continue-on-error: true
+      - run: cargo clippy --all-targets
+        continue-on-error: true

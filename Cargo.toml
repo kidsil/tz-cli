@@ -1,0 +1,32 @@
+[package]
+name = "tz-cli"
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/kidsil/tz-cli"
+readme = "README.md"
+keywords = ["timezone", "time", "cli", "world-clock", "tui"]
+categories = ["command-line-utilities", "date-and-time"]
+description = "Blazing-fast timezone CLI: convert times across cities and an interactive world clock"
+
+[[bin]]
+name = "tz"
+path = "src/main.rs"
+
+[dependencies]
+# jiff: rigorous datetime + IANA tzdb. Bundle the tzdb into the binary so the
+# tool is fully self-contained and correct regardless of the host's tz data.
+jiff = { version = "0.2", features = ["tzdb-bundle-always"] }
+# ratatui re-exports crossterm, so depend on it alone to avoid version skew.
+ratatui = "0.30"
+
+[profile.release]
+# Note when cutting a release: a compiled binary embeds the build machine's
+# dependency paths in its panic strings, so publish source only, or build with
+# --remap-path-prefix. `trim-paths` would do this declaratively but is not
+# stable in Cargo 1.96.
+opt-level = 3
+lto = true
+codegen-units = 1
+strip = true
+panic = "abort"
