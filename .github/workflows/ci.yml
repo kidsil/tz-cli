@@ -4,10 +4,6 @@ on:
   push:
     branches: [main]
   pull_request:
-  schedule:
-    # Timezone and currency data change when governments and issuers change the
-    # rules, so run on a schedule and not only when the code changes.
-    - cron: '0 6 * * 1'
 
 jobs:
   test:
